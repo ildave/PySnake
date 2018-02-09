@@ -6,6 +6,7 @@ LEFT = (-1, 0)
 RIGHT = (1, 0)
 DOWN = (0, 1)
 UP = (0, -1)
+STILL = (0, 0)
 
 class Segment():
     def __init__(self, x, y, i):
@@ -27,9 +28,33 @@ class Snake():
         for i in range(0, size):
             segment = Segment(10, 10 + i, i)
             self.segments.append(segment)
-            print (10 + i)
         self.head = self.segments[0]
+        self.tail = self.segments[len(self.segments) - 1]
 
+    def dead(self):
+        dead = False
+        print(self.head.x, self.head.y)
+        for s in self.segments[1:]:
+            if self.head.x == s.x and self.head.y == s.y:
+                return True
+        if self.head.x < 0 or self.head.x > cols or self.head.y < 0 or self.head.y > rows:
+            return True
+        return False
+
+    def eat(self, pill):
+        x, y, w, h = pill
+        x, y = pixelsToCoords(x, y)
+        if x == self.head.x and y == self.head.y:
+            print("GNAM")
+            newX = self.tail.prevX
+            newY = self.tail.prevY
+            s = Segment(newX, newY, self.tail.index + 1)
+            self.segments.append(s)
+            self.size += 1
+            self.tail = s
+            return True
+        else:
+            return False
 
     def draw(self):
         for s in self.segments:
@@ -63,11 +88,16 @@ def cooordsToPixel(r, c):
     y = c * segment_size
     return x, y
 
+def pixelsToCoords(x, y):
+    r = x / segment_size
+    c = y / segment_size
+    return r, c
+
 def getPill():
     pill = None
     while not pill:
-        x = random.randint(0, rows)
-        y = random.randint(0, cols)
+        x = random.randint(0, cols - 1)
+        y = random.randint(0, rows - 1)
         for s in snake.segments:
             if s.x == x and s.y == y:
                 break
@@ -85,13 +115,13 @@ screen = pygame.display.set_mode(size)
 done = False
 clock = pygame.time.Clock()
 
-snake = Snake(4, screen)
+snake = Snake(5, screen)
 direction = UP
 
 pill = getPill()
 
 while not done:
-    clock.tick(10)
+    clock.tick(30)
     #direction = (0, 0)
 
     for event in pygame.event.get():
@@ -99,20 +129,31 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                direction = UP
+                if direction != DOWN:
+                    direction = UP
             if event.key == pygame.K_DOWN:
-                direction = DOWN
+                if direction != UP:
+                    direction = DOWN
             if event.key == pygame.K_LEFT:
-                direction = LEFT
+                if direction != RIGHT:
+                    direction = LEFT
             if event.key == pygame.K_RIGHT:
-                direction = RIGHT
-    print(direction)
+                if direction != LEFT:
+                    direction = RIGHT
 
     screen.fill(pygame.color.THECOLORS['black'])
-    if direction != (0, 0):
+    
+    if direction != STILL:
         snake.move(direction)
-    snake.debug()
+    
+    if snake.dead():
+        done = True
+
+    #snake.debug()
     pygame.draw.rect(screen, pygame.color.THECOLORS['pink'], pill)
     snake.draw()
+
+    if snake.eat(pill):
+        pill = getPill()
 
     pygame.display.flip()
