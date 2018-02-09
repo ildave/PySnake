@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PySnake", "PySnake\PySnake.pyproj", "{5663FF4A-178C-42AF-85B6-9A3BF15DAD67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5663FF4A-178C-42AF-85B6-9A3BF15DAD67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5663FF4A-178C-42AF-85B6-9A3BF15DAD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8EA7E324-9174-4613-8FC3-96B187CC1632}
+	EndGlobalSection
+EndGlobal
