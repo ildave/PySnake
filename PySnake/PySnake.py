@@ -30,16 +30,15 @@ class Snake():
             self.segments.append(segment)
         self.head = self.segments[0]
         self.tail = self.segments[len(self.segments) - 1]
+        self.isDead = False
 
-    def dead(self):
-        dead = False
-        print(self.head.x, self.head.y)
+    def willDie(self, x, y):
+        print(x,y)
         for s in self.segments[1:]:
-            if self.head.x == s.x and self.head.y == s.y:
-                return True
-        if self.head.x < 0 or self.head.x > cols or self.head.y < 0 or self.head.y > rows:
-            return True
-        return False
+            if x == s.x and y == s.y:
+                self.isDead = True
+        if x < 0 or x > cols or y < 0 or y > rows:
+            self.isDead = True
 
     def eat(self, pill):
         x, y, w, h = pill
@@ -65,18 +64,23 @@ class Snake():
 
 
     def move(self, direction):
-        self.head.prevX = self.head.x
-        self.head.prevY = self.head.y
         hor, vert = direction
-        self.head.x += hor
-        self.head.y += vert
-        for i in range(1, len(self.segments)):
-            s = self.segments[i]
-            predecessor = self.segments[i - 1]
-            s.prevX = s.x
-            s.prevY = s.y
-            s.x = predecessor.prevX
-            s.y = predecessor.prevY
+        potX = self.head.x + hor
+        potY = self.head.y + vert
+        self.willDie(potX, potY)
+
+        if not self.isDead:
+            self.head.prevX = self.head.x
+            self.head.prevY = self.head.y
+            self.head.x += hor
+            self.head.y += vert
+            for i in range(1, len(self.segments)):
+                s = self.segments[i]
+                predecessor = self.segments[i - 1]
+                s.prevX = s.x
+                s.prevY = s.y
+                s.x = predecessor.prevX
+                s.y = predecessor.prevY
 
     def debug(self):
         for i in range(0, len(self.segments)):
@@ -121,7 +125,7 @@ direction = UP
 pill = getPill()
 
 while not done:
-    clock.tick(30)
+    clock.tick(5)
     #direction = (0, 0)
 
     for event in pygame.event.get():
@@ -146,7 +150,7 @@ while not done:
     if direction != STILL:
         snake.move(direction)
     
-    if snake.dead():
+    if snake.isDead:
         done = True
 
     #snake.debug()
