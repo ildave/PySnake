@@ -8,8 +8,90 @@ DOWN = (0, 1)
 UP = (0, -1)
 STILL = (0, 0)
 
+class Game():
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.size = self.width, self.height
+        self.segment_size = 20
+        self.rows = self.height / self.segment_size
+        self.cols = self.width / self.segment_size
+        self.screen = pygame.display.set_mode(self.size)
+        self.done = False
+        self.clock = pygame.time.Clock()
+
+        self.snake = Snake(5, self)
+        self.direction = UP
+
+        self.getPill()
+
+    def getPill(self):
+        pill = None
+        while not pill:
+            x = random.randint(0, self.cols - 1)
+            y = random.randint(0, self.rows - 1)
+            for s in self.snake.segments:
+                if s.x == x and s.y == y:
+                    break
+            c, r = self.cooordsToPixel(x, y)
+            pill = c, r, self.segment_size, self.segment_size
+        self.pill = pill
+
+    def cooordsToPixel(self, r, c):
+        x = r * self.segment_size
+        y = c * self.segment_size
+        return x, y
+
+    def pixelsToCoords(self, x, y):
+        r = x / self.segment_size
+        c = y / self.segment_size
+        return r, c
+
+    def resetScreen(self):
+        self.screen.fill(pygame.color.THECOLORS['black'])
+
+    def drawPill(self):
+        pygame.draw.rect(self.screen, pygame.color.THECOLORS['pink'], self.pill)
+
+    def draw(self):
+        self.resetScreen()
+        self.drawPill()
+        self.snake.draw()
+
+        pygame.display.flip()
+
+    def manageInput(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: 
+                done = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    if self.direction != DOWN:
+                        self.direction = UP
+                if event.key == pygame.K_DOWN:
+                    if self.direction != UP:
+                        self.direction = DOWN
+                if event.key == pygame.K_LEFT:
+                    if self.direction != RIGHT:
+                        self.direction = LEFT
+                if event.key == pygame.K_RIGHT:
+                    if self.direction != LEFT:
+                        self.direction = RIGHT
+
+    def update(self):
+        if game.direction != STILL:
+            game.snake.move(game.direction)
+    
+        if game.snake.isDead:
+            game.done = True
+
+        if game.snake.eat(game.pill):
+         game.getPill()
+
+
 class Segment():
-    def __init__(self, x, y, i):
+    def __init__(self, x, y, i, game):
+        self.game = game
         self.index = i
         self.x = x
         self.y = y
@@ -17,37 +99,36 @@ class Segment():
         self.prevY = self.y
 
     def getRect(self):
-        x, y = cooordsToPixel(self.x, self.y)
-        return x, y, segment_size, segment_size
+        x, y = self.game.cooordsToPixel(self.x, self.y)
+        return x, y, game.segment_size, game.segment_size
 
 class Snake():
-    def __init__(self, size, screen):
-        self.screen = screen
+    def __init__(self, size, game):
+        self.game = game
+        self.screen = self.game.screen
         self.segments = []
         self.size = size
         for i in range(0, size):
-            segment = Segment(10, 10 + i, i)
+            segment = Segment(10, 10 + i, i, self.game)
             self.segments.append(segment)
         self.head = self.segments[0]
         self.tail = self.segments[len(self.segments) - 1]
         self.isDead = False
 
     def willDie(self, x, y):
-        print(x,y)
         for s in self.segments[1:]:
             if x == s.x and y == s.y:
                 self.isDead = True
-        if x < 0 or x > cols or y < 0 or y > rows:
+        if x < 0 or x > self.game.cols or y < 0 or y > self.game.rows:
             self.isDead = True
 
     def eat(self, pill):
         x, y, w, h = pill
-        x, y = pixelsToCoords(x, y)
+        x, y = self.game.pixelsToCoords(x, y)
         if x == self.head.x and y == self.head.y:
-            print("GNAM")
             newX = self.tail.prevX
             newY = self.tail.prevY
-            s = Segment(newX, newY, self.tail.index + 1)
+            s = Segment(newX, newY, self.tail.index + 1, self.game)
             self.segments.append(s)
             self.size += 1
             self.tail = s
@@ -86,78 +167,14 @@ class Snake():
         for i in range(0, len(self.segments)):
             print(i, self.segments[i].x, self.segments[i].y)
 
+game = Game(800, 600)
 
-def cooordsToPixel(r, c):
-    x = r * segment_size
-    y = c * segment_size
-    return x, y
+while not game.done:
+    game.clock.tick(5)
+    game.manageInput()
+    game.update()
+    game.draw()
 
-def pixelsToCoords(x, y):
-    r = x / segment_size
-    c = y / segment_size
-    return r, c
-
-def getPill():
-    pill = None
-    while not pill:
-        x = random.randint(0, cols - 1)
-        y = random.randint(0, rows - 1)
-        for s in snake.segments:
-            if s.x == x and s.y == y:
-                break
-        c, r = cooordsToPixel(x, y)
-        pill = c, r, segment_size, segment_size
-    return pill
-
-
-size = width, height = 800, 600
-segment_size = 20
-rows = height / segment_size
-cols = width / segment_size
-
-screen = pygame.display.set_mode(size)
-done = False
-clock = pygame.time.Clock()
-
-snake = Snake(5, screen)
-direction = UP
-
-pill = getPill()
-
-while not done:
-    clock.tick(5)
-    #direction = (0, 0)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: 
-            done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                if direction != DOWN:
-                    direction = UP
-            if event.key == pygame.K_DOWN:
-                if direction != UP:
-                    direction = DOWN
-            if event.key == pygame.K_LEFT:
-                if direction != RIGHT:
-                    direction = LEFT
-            if event.key == pygame.K_RIGHT:
-                if direction != LEFT:
-                    direction = RIGHT
-
-    screen.fill(pygame.color.THECOLORS['black'])
     
-    if direction != STILL:
-        snake.move(direction)
+
     
-    if snake.isDead:
-        done = True
-
-    #snake.debug()
-    pygame.draw.rect(screen, pygame.color.THECOLORS['pink'], pill)
-    snake.draw()
-
-    if snake.eat(pill):
-        pill = getPill()
-
-    pygame.display.flip()
