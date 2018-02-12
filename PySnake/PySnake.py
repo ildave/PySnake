@@ -2,13 +2,13 @@ import pygame
 import sys
 import random
 
-LEFT = (-1, 0)
-RIGHT = (1, 0)
-DOWN = (0, 1)
-UP = (0, -1)
-STILL = (0, 0)
-
 class Game():
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    DOWN = (0, 1)
+    UP = (0, -1)
+    STILL = (0, 0)
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -21,7 +21,7 @@ class Game():
         self.clock = pygame.time.Clock()
 
         self.snake = Snake(5, self)
-        self.direction = UP
+        self.direction = self.UP
 
         self.getPill()
 
@@ -66,27 +66,27 @@ class Game():
                 done = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    if self.direction != DOWN:
-                        self.direction = UP
+                    if self.direction != self.DOWN:
+                        self.direction = self.UP
                 if event.key == pygame.K_DOWN:
-                    if self.direction != UP:
-                        self.direction = DOWN
+                    if self.direction != self.UP:
+                        self.direction = self.DOWN
                 if event.key == pygame.K_LEFT:
-                    if self.direction != RIGHT:
-                        self.direction = LEFT
+                    if self.direction != self.RIGHT:
+                        self.direction = self.LEFT
                 if event.key == pygame.K_RIGHT:
-                    if self.direction != LEFT:
-                        self.direction = RIGHT
+                    if self.direction != self.LEFT:
+                        self.direction = self.RIGHT
 
     def update(self):
-        if game.direction != STILL:
-            game.snake.move(game.direction)
+        if self.direction != self.STILL:
+            self.snake.move(self.direction)
     
-        if game.snake.isDead:
-            game.done = True
+        if self.snake.isDead:
+            self.done = True
 
-        if game.snake.eat(game.pill):
-         game.getPill()
+        if self.snake.eat(self.pill):
+         self.getPill()
 
 
 class Segment():
