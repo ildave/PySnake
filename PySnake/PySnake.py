@@ -23,6 +23,8 @@ class Game():
         self.snake = Snake(5, self)
         self.direction = self.UP
 
+        self.points = 0
+
         self.getPill()
 
     def getPill(self):
@@ -87,6 +89,11 @@ class Game():
 
         if self.snake.eat(self.pill):
          self.getPill()
+         self.updatePoints()
+
+    def updatePoints(self):
+        self.points += self.snake.size - self.snake.startingSize
+        print("Points", self.points)
 
 
 class Segment():
@@ -108,6 +115,7 @@ class Snake():
         self.screen = self.game.screen
         self.segments = []
         self.size = size
+        self.startingSize = self.size
         for i in range(0, size):
             segment = Segment(10, 10 + i, i, self.game)
             self.segments.append(segment)
