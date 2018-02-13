@@ -27,6 +27,7 @@ class Game():
         self.direction = self.UP
 
         self.points = 0
+        self.speed = 5
 
         self.getPill()
 
@@ -115,7 +116,7 @@ class Segment():
 
     def getRect(self):
         x, y = self.game.cooordsToPixel(self.x, self.y)
-        return x, y, game.segment_size, game.segment_size
+        return x, y, self.game.segment_size, self.game.segment_size
 
 class Snake():
     def __init__(self, size, game):
@@ -183,14 +184,17 @@ class Snake():
         for i in range(0, len(self.segments)):
             print(i, self.segments[i].x, self.segments[i].y)
 
-game = Game(800, 600)
 
-while not game.done:
-    game.clock.tick(5)
-    game.manageInput()
-    game.update()
-    game.draw()
+def main():
+    game = Game(800, 600)
 
-    
+    while not game.done:
+        game.clock.tick(game.speed)
+        game.manageInput()
+        game.update()
+        game.draw()
+
+if __name__ == "__main__":
+    main()
 
     
