@@ -13,12 +13,15 @@ class Game():
         self.width = width
         self.height = height
         self.size = self.width, self.height
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.font.init()
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont('Arial', 30)
+        self.done = False
+        
         self.segment_size = 20
         self.rows = self.height / self.segment_size
         self.cols = self.width / self.segment_size
-        self.screen = pygame.display.set_mode(self.size)
-        self.done = False
-        self.clock = pygame.time.Clock()
 
         self.snake = Snake(5, self)
         self.direction = self.UP
@@ -55,10 +58,15 @@ class Game():
     def drawPill(self):
         pygame.draw.rect(self.screen, pygame.color.THECOLORS['pink'], self.pill)
 
+    def drawScore(self):
+        textsurface = self.font.render('Score: ' + str(self.points), False, pygame.color.THECOLORS['white'])
+        self.screen.blit(textsurface, (10, 10))
+
     def draw(self):
         self.resetScreen()
         self.drawPill()
         self.snake.draw()
+        self.drawScore()
 
         pygame.display.flip()
 
