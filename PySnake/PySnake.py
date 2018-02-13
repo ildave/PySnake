@@ -74,7 +74,7 @@ class Game():
     def manageInput(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
-                done = True
+                self.done = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     if self.direction != self.DOWN:
