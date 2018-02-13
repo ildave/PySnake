@@ -26,7 +26,7 @@ class Game():
         self.snake = Snake(5, self)
         self.direction = self.UP
 
-        self.points = 0
+        self.score = 0
         self.speed = 5
 
         self.getPill()
@@ -60,7 +60,7 @@ class Game():
         pygame.draw.rect(self.screen, pygame.color.THECOLORS['pink'], self.pill)
 
     def drawScore(self):
-        textsurface = self.font.render('Score: ' + str(self.points), False, pygame.color.THECOLORS['white'])
+        textsurface = self.font.render('Score: ' + str(self.score), False, pygame.color.THECOLORS['white'])
         self.screen.blit(textsurface, (10, 10))
 
     def draw(self):
@@ -101,7 +101,7 @@ class Game():
          self.updatePoints()
 
     def updatePoints(self):
-        self.points += self.snake.size - self.snake.startingSize
+        self.score += self.snake.size - self.snake.startingSize
 
 
 class Segment():
