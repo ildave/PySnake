@@ -102,7 +102,6 @@ class Game():
 
     def updatePoints(self):
         self.points += self.snake.size - self.snake.startingSize
-        print("Points", self.points)
 
 
 class Segment():
